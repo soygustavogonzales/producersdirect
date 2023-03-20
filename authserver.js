@@ -31,13 +31,15 @@ app.post('auth/login', (req, res) => {
   const user = { name: username }
 
   const accessToken = generateAccessToken(user)
-  const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET)
+  const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: '7d'
+  })
   refreshTokens.push(refreshToken)
   res.json({ accessToken: accessToken, refreshToken: refreshToken })
 })
 
 function generateAccessToken(user) {
-  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15s' })
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 5*60 })
 }
 
 app.listen(4000)
