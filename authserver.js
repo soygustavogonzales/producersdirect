@@ -6,7 +6,9 @@ const jwt = require('jsonwebtoken')
 
 app.use(express.json())
 
-let refreshTokens = []
+let refreshTokens = [];
+let tokens = [];
+let users = [];
 
 app.post('auth/refresh', (req, res) => {
   const refreshToken = req.body.token
@@ -24,13 +26,23 @@ app.delete('/logout', (req, res) => {
   res.sendStatus(204)
 })
 
+app.post('/whoami', (req, res) => {
+    const token = req.body.token
+    if (token == null) return res.sendStatus(401)
+    if (!tokens.includes(refreshToken)) return res.sendStatus(403)
+    res.send()
+});
+
 app.post('auth/login', (req, res) => {
   // Authenticate User
 
   const username = req.body.username
-  const user = { name: username }
+  const psw = req.body.username
+  const user = { name: username, pasword: psw }
+  users.push(user)
 
   const accessToken = generateAccessToken(user)
+  tokens.push(accessToken)
   const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
     expiresIn: '7d'
   })
